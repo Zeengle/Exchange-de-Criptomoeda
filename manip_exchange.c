@@ -26,8 +26,31 @@ void atualizar() {
 
 }
 
-void login() {
+void login(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXRP, int usuariologado) {
+limpaterminal();
+  char cpflogin[12];
+  char senhalogin[7];
 
+  printf("|------------------------------[Login]------------------------------|"
+         "\n");
+  printf("Digite o CPF: ");
+  scanf("%s", cpflogin);
+
+  if (strlen(cpflogin) != 11) {
+    printf("CPF inválido!");
+    menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+  }
+  limpabuffer();
+
+  for (int i = 0; i < 10; i++) {
+    if (strcmp(cpflogin, pessoas[i].CPF) == 0) {
+      printf("Digite sua senha: ");
+      scanf("%s", senhalogin);
+      if (strlen(senhalogin) != 6) {
+        printf("Senha inválida!");
+        menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      }
+      limpabuffer();
 }
 
 void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {

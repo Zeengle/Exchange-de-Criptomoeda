@@ -1,4 +1,4 @@
-# 🪙 Exchange-de-Criptomoedas em C.
+# 🪙 Exchange-de-Criptomoedas em C
 
 Bem-Vindo ao projeto em C da criação de um Exchange de criptomoedas do Curso (Desenvolvimento de Algoritmo) na Faculdade (FEI).
 ## 📈 Como funciona o nosso projeto.

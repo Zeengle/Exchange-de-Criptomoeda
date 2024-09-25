@@ -310,3 +310,16 @@ void limpabuffer() {
   }
   return;
 }
+
+void printarcpf(char *cpf) {
+  for (int i = 1; i < 12; i++) {
+    if (i % 3 == 0 && i != 1 && i != 9) {
+      printf("%c.", cpf[i - 1]);
+    } else if (i == 9) {
+      printf("%c-", cpf[i - 1]);
+    } else {
+      printf("%c", cpf[i - 1]);
+    }
+  }
+  printf("\n");
+}

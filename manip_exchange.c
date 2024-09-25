@@ -9,8 +9,20 @@ void consultarsaldo(pessoa pessoas[], int usuariologado) {
     limpaterminal();
 }
 
-void consultarextrato() {
-
+// Função que mostra as transações realizadas pelo usuário com data, hora,
+// valor, moeda e seu saldo resumido
+void consultarextrato(pessoa pessoas[], int usuariologado) {
+  printf("|------------------------------[Extrato]------------------------------\n");
+  printf("%-18s\t%-6s\t%-10s\t%-6s\t%-6s\t%-12s\t%-12s\t%-12s\t%-12s\n",
+         "DATA/HORA", "SINAL", "VALOR", "MOEDA", "TAXA", "QUANT REAIS",
+         "QUANT BTC", "QUANT ETH", "QUANT XRP \n");
+  for (int i = 0; i < 100; i++) {
+    if (pessoas[usuariologado].ext[i][0] != '\0') {
+      printf("%s\n", pessoas[usuariologado].ext[i]);
+    }
+  }
+  espera();
+  limpaterminal();
 }
 
 void depositar() {
@@ -323,3 +335,29 @@ void printarcpf(char *cpf) {
   }
   printf("\n");
 }
+
+
+// Responsável por adicionar uma transação no extrato do usuário
+void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor, char moeda[6], float taxa) {
+  char extrato[100];
+  time_t t = time(NULL);         // Pega o horário atual
+  struct tm tm = *localtime(&t); // Serve pra pegar cada informação das datas
+
+  snprintf(extrato, sizeof(extrato),
+           "[%02d/%02d/%04d "
+           "%02d:%02d]\t%-6c\t%-10.2f\t%-6s\t%-6.2f\t%-12.2f\t%-12.2f\t%-12."
+           "2f\t%-12.2f\n",
+           tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min,
+           sinal, valor, moeda, taxa, pessoas[usuariologado].reais,
+           pessoas[usuariologado].btc, pessoas[usuariologado].eth,
+           pessoas[usuariologado].xrp);
+
+  // Procura uma linha vazia no extrato
+  for (int i = 0; i < 100; i++) {
+    if (pessoas[usuariologado].ext[i][0] == '\0') {
+      strcpy(pessoas[usuariologado].ext[i], extrato);
+      break;
+    }
+  }
+}
+

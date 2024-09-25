@@ -43,5 +43,6 @@ void espera();
 void limpabuffer();
 int verificaCPF(char *cpf);
 void printarcpf(char *cpf);
+void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor, char moeda[6], float taxa);
 
 #endif

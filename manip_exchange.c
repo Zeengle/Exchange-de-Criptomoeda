@@ -41,8 +41,21 @@ void depositar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotac
   criaextrato(pessoas, usuariologado, '+', depositado, "REAIS", 0);
 }
 
-void sacar() {
-
+void sacar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+    limpaterminal();
+    float sacado = 0;
+    printf("|------------------------------------------------[Sacar]------------------------------------------------| \n");
+    printf("Você possui %.2f reais para ser sacados \nQuantos reais deseja sacar?\n", pessoas[usuariologado].reais);
+    scanf("%f", &sacado);
+    verificacao(pessoas, usuariologado);
+    if(sacado <= pessoas[usuariologado].reais){
+        pessoas[usuariologado].reais -= sacado;
+        consultarsaldo(pessoas, usuariologado);
+        criaextrato(pessoas, usuariologado, '-', sacado, "REAIS", 0);
+    } else{
+        printf("Impossível sacar este valor.\n");
+        espera();
+    }
 }
 
 void comprar() {

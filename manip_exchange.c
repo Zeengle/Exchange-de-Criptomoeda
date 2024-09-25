@@ -59,10 +59,7 @@ void sacar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXR
 }
 
 // Função que permite a compra de criptomoedas pelo usuário
-void comprar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,
-             float cotacaoXRP,
-             int usuariologado) { // funcionando :) (testa mais vezes com outros
-                                  // valores e tal)
+void comprar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXRP,int usuariologado) {
   limpaterminal();
   char escolha;
   float comprar, taxa, compra;
@@ -227,7 +224,29 @@ void vender(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXR
     taxa = (venda * cotacaoETH * 0.02);
     conversao = cotacaoETH * venda;
     verificacao(pessoas, usuariologado);
+    if (pessoas[usuariologado].xrp - venda >= 0) {
+      // printf("Até aqui foi"); DEBUGANDO...
+      pessoas[usuariologado].xrp -= venda;
+      pessoas[usuariologado].reais +=
+          ((venda * cotacaoXRP) - (venda * cotacaoXRP * 0.01));
+      printf("Venda realizada com sucesso!\n");
+      printf("Você ficou com :R$%.2f e com %.2f XRP",
+             pessoas[usuariologado].reais, pessoas[usuariologado].xrp);
 
+      criaextrato(pessoas, usuariologado, '-', conversao, "XRP", 0.02);
+      consultarsaldo(pessoas, usuariologado);
+    } else {
+      printf("Saldo de Ripple indisponível.");
+      recibovenda(conversao, taxa);
+      espera();
+    }
+    break;
+  default:
+    printf("Este comando não é valido, tente novamente");
+    espera();
+    break;
+  }
+  limpaterminal();
 }
 
 void atualizar() {
@@ -555,6 +574,13 @@ void recibocompra(float compra, float taxa) {
   printf("Total da compra: \n");
   printf("COMPRA + TAXA = TOTAL \n");
   printf("%.2f + %.2f = %.2f \n", compra, taxa, compra + taxa);
+}
+
+void recibovenda(float conversao, float taxa) {
+  printf("|-----------------------[Recibo Venda]-----------------------| \n");
+  printf("Total da venda: \n");
+  printf("VENDA - TAXA = TOTAL \n");
+  printf("%.2f - %.2f = %.2f \n", conversao, taxa, conversao - taxa);
 }
 
 void verificacao(pessoa pessoas[], int usuariologado) {

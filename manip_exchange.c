@@ -56,7 +56,7 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotac
         espera();
         menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
         return;
-      } else if ((strlen(cpfcadastro) != 11)) {
+      } else if ((strlen(cpfcadastro) != 11) || (verificaCPF(cpfcadastro) == 0)) {
         printf("CPF inválido!\n");
         espera();
         menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
@@ -199,6 +199,61 @@ void espera() {
   fflush(stdin);
   printf("Aperte ENTER para SAIR!");
   limpabuffer();
+}
+
+int verificaCPF(char *cpf) {
+  int numeros_cpf[11];
+  int soma = 0;
+  int maxv1 = 10;
+  int maxv2 = 11;
+  int resto = 0;
+  int veri = 0;
+  int verificador1 = 0, verificador2 = 0;
+  for (int i = 0; i < 11; i++) {
+    numeros_cpf[i] = cpf[i] - 48;
+  }
+  for (int i = 0; i < 11; i++) {
+    // implementação da verificação de cpfs com todos os digitos iguais
+    if (numeros_cpf[i] == numeros_cpf[0]) {
+      veri += 1;
+    }
+  }
+  if (veri == 11) {
+    printf("CPF Inválido");
+  } else {
+
+    for (int i = 0; i < 9; i++) {
+      soma += numeros_cpf[i] * maxv1;
+      maxv1--;
+    }
+
+    resto = soma % 11;
+
+    if (resto == 1 || resto == 0) {
+      verificador1 = 0;
+    } else {
+      verificador1 = 11 - resto;
+    }
+    soma = 0;
+
+    for (int i = 0; i < 10; i++) {
+      soma += numeros_cpf[i] * maxv2;
+      maxv2--;
+    }
+
+    resto = soma % 11;
+    if (resto == 1 || resto == 0) {
+      verificador2 = 0;
+    } else {
+      verificador2 = 11 - resto;
+    }
+
+    if (verificador1 == numeros_cpf[9] && verificador2 == numeros_cpf[10]) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 }
 
 //Limpa o buffer do teclado

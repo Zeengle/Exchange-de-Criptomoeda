@@ -157,7 +157,76 @@ void comprar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,
   limpaterminal();
 }
 
-void vender() {
+void vender(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXRP, int usuariologado) {
+  limpaterminal();
+  char escolha;
+  float venda, taxa, conversao;
+  printf("|------------------------------------------------[Vender "
+         "Cripto]------------------------------------------------| \n");
+  printf("Cotação das "
+         "Criptomoedas:\n\tBitcoin:\t%.2f\n\tEthereum:\t%.2f\n\tRipple:\t\t%."
+         "2f\n\nQue moeda deseja vender? (B/E/R)",
+         cotacaoBTC, cotacaoETH, cotacaoXRP);
+  scanf(" %c", &escolha);
+  escolha = toupper(escolha);
+  switch (escolha) {
+  case 'B':
+    limpaterminal();
+    printf("Você possui:\t%.2f BTC\nCotação do Bitcoin:\t%.2f\n\nQuantos "
+           "Bitcoins deseja vender? ",
+           pessoas[usuariologado].btc, cotacaoBTC);
+    scanf("%f", &venda);
+    taxa = (venda * cotacaoBTC * 0.03);
+    conversao = cotacaoBTC * venda;
+    verificacao(pessoas, usuariologado);
+    if (pessoas[usuariologado].btc - venda >= 0) {
+      // printf("Até aqui foi"); DEBUGANDO...
+      pessoas[usuariologado].btc -= venda;
+      pessoas[usuariologado].reais += (conversao - taxa);
+      printf("Venda realizada com sucesso!\n");
+      recibovenda(conversao, taxa);
+      criaextrato(pessoas, usuariologado, '-', conversao, "BTC", 0.02);
+      consultarsaldo(pessoas, usuariologado);
+    } else {
+      printf("Saldo de Bitcoins indisponível. \n");
+      recibovenda(conversao, taxa);
+      espera();
+    }
+    break;
+  case 'E':
+    limpaterminal();
+    printf("Você possui:\t%.2f ETH\nCotação do Ethereum:\t%.2f\n\nQuantos "
+           "Ethereuns deseja vender? ",
+           pessoas[usuariologado].eth, cotacaoETH);
+    scanf("%f", &venda);
+    taxa = (venda * cotacaoETH * 0.02);
+    conversao = cotacaoETH * venda;
+    verificacao(pessoas, usuariologado);
+    if (pessoas[usuariologado].eth - venda >= 0) {
+      // printf("Até aqui foi"); DEBUGANDO...
+      pessoas[usuariologado].eth -= venda;
+      pessoas[usuariologado].reais +=
+          ((venda * cotacaoETH) - (venda * cotacaoETH * 0.02));
+      printf("Venda realizada com sucesso!\n");
+      printf("Você ficou com :R$%.2f e com %.2f ETH",
+             pessoas[usuariologado].reais, pessoas[usuariologado].eth);
+      recibovenda(conversao, taxa);
+      criaextrato(pessoas, usuariologado, '-', conversao, "ETH", 0.02);
+      consultarsaldo(pessoas, usuariologado);
+    } else {
+      printf("Saldo de Etherium indisponível. \n");
+      recibovenda(conversao, taxa);
+    }
+    break;
+  case 'R':
+    limpaterminal();
+    printf("Você possui:\t%.2f XRP\nCotação do Ripple:\t%.2f\n\nQuantos "
+           "Ripples deseja vender? ",
+           pessoas[usuariologado].xrp, cotacaoXRP);
+    scanf("%f", &venda);
+    taxa = (venda * cotacaoETH * 0.02);
+    conversao = cotacaoETH * venda;
+    verificacao(pessoas, usuariologado);
 
 }
 

@@ -42,5 +42,6 @@ void limpaterminal();
 void espera();
 void limpabuffer();
 int verificaCPF(char *cpf);
+void printarcpf(char *cpf);
 
 #endif

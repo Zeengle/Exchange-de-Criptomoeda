@@ -1,5 +1,12 @@
-void consultarsaldo() {
-
+void consultarsaldo(pessoa pessoas[], int usuariologado) {
+    printf("|------------------------------------------------[Saldo]-----------------------------------------------|\n");
+    printf("Nome: %s\n",pessoas[usuariologado].nome);
+    printf("CPF: ");
+    printarcpf(pessoas[usuariologado].CPF);
+    printf("\nReais: %.2f\nBitcoin: %.2f\nEthereum: %.2f\nRipple: %.2f\n",pessoas[usuariologado].reais, 
+           pessoas[usuariologado].btc, pessoas[usuariologado].eth, pessoas[usuariologado].xrp);
+    espera();
+    limpaterminal();
 }
 
 void consultarextrato() {

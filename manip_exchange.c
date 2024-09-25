@@ -97,6 +97,25 @@ limpaterminal();
     compra = cotacaoXRP * comprar;
     taxa = ((cotacaoXRP * comprar) * 0.01);
     verificacao(pessoas, usuariologado);
+    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /100.00 >=0) {
+      pessoas[usuariologado].xrp += comprar;
+      pessoas[usuariologado].reais -= (compra + taxa);
+      criaextrato(pessoas, usuariologado, '+', compra, "XRP", 0.01);
+      recibocompra(compra, taxa);
+      consultarsaldo(pessoas, usuariologado);
+    } else {
+      printf("Você não possui reais necessarios para comprar essa quantia de "
+             "Ripple \n");
+      recibocompra(compra, taxa);
+      espera();
+    }
+    break;
+  default:
+    printf("Este comando não é valido, tente novamente. \n");
+    espera();
+    break;
+  }
+  limpaterminal();
 }
 
 void sacar() {
@@ -427,6 +446,27 @@ void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor, c
     if (pessoas[usuariologado].ext[i][0] == '\0') {
       strcpy(pessoas[usuariologado].ext[i], extrato);
       break;
+    }
+  }
+}
+
+void recibocompra(float compra, float taxa) {
+  printf("|-----------------------[Recibo Compra]-----------------------| \n");
+  printf("Total da compra: \n");
+  printf("COMPRA + TAXA = TOTAL \n");
+  printf("%.2f + %.2f = %.2f \n", compra, taxa, compra + taxa);
+}
+
+void verificacao(pessoa pessoas[], int usuariologado) {
+  while (1) {
+    char senha[7];
+    printf("Digite sua senha: ");
+    scanf("%s", senha);
+    if (strcmp(pessoas[usuariologado].senha, senha) == 0 ||
+        strlen(senha) != 6) {
+      return;
+    } else {
+      printf("Senha inválida. Tente novamente\n");
     }
   }
 }

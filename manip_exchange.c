@@ -25,97 +25,20 @@ void consultarextrato(pessoa pessoas[], int usuariologado) {
   limpaterminal();
 }
 
-void depositar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXRP,int usuariologado) {
-limpaterminal();
-  char escolha;
-  float comprar, taxa, compra;
-  printf("|------------------------------------------------[Comprar "
-         "Cripto]------------------------------------------------|\n");
-  printf("Cotação das "
-         "Criptomoedas:\n\tBitcoin:\t%.2f\n\tEthereum:\t%.2f\n\tRipple:\t\t%."
-         "2f\nQue moeda deseja comprar? (B/E/R) \n",
-         cotacaoBTC, cotacaoETH, cotacaoXRP);
-  scanf(" %c", &escolha);
-  escolha = toupper(escolha);
-  // Fazer uma função para poupar linhas aqui, onde a mesma recebe as opc
-  switch (escolha) {
-  case 'B':
-    limpaterminal();
-    printf("Você possui: R$%.2f\nCotação do Bitcoin: %.2f Taxa: 2.00%\nQuantos "
-           "Bitcoins deseja comprar? \n",
-           pessoas[usuariologado].reais, cotacaoBTC);
-    scanf("%f", &comprar);
-    compra = cotacaoBTC * comprar;
-    taxa = ((cotacaoBTC * comprar) * 0.02);
-    verificacao(pessoas, usuariologado);
-    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /
-            100.00 >=
-        0) { // verificar se vai dar valor negativo com a taxa aplicada
-      pessoas[usuariologado].btc += comprar; // adiciona os bitcoins comprados
-      pessoas[usuariologado].reais -=
-          (compra + taxa); // faz a taxação na cotação e adiciona nos reais
-      criaextrato(pessoas, usuariologado, '+', compra, "BTC", 0.02);
-      recibocompra(compra, taxa);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Você não possui reais necessarios para comprar essa quantia de "
-             "Bitcoin \n");
-      recibocompra(compra, taxa);
-      espera();
-    }
-    break;
-  case 'E':
-    limpaterminal();
-    printf("Você possui: R$%.2f\nCotação do Ethereum: %.2f Taxa: "
-           "1.00%\nQuantos Ethereum deseja comprar? \n",
-           pessoas[usuariologado].reais, cotacaoETH);
-    scanf("%f", &comprar);
-    compra = cotacaoETH * comprar;
-    taxa = ((cotacaoETH * comprar) * 0.01);
-    verificacao(pessoas, usuariologado);
-    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /
-            100.00 >=
-        0) {
-      pessoas[usuariologado].eth += comprar;
-      pessoas[usuariologado].reais -= (compra + taxa);
-      criaextrato(pessoas, usuariologado, '+', compra, "ETH", 0.01);
-      recibocompra(compra, taxa);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Você não possui reais necessarios para comprar essa quantia de "
-             "Ethereum \n");
-      recibocompra(compra, taxa);
-      espera();
-    }
-    break;
-  case 'R':
-    limpaterminal();
-    printf("Você possui:\tR$%.2f\nCotação do Ripple:\t%.2f Taxa: "
-           "1.00%\nQuantos Ripple deseja comprar? \n",
-           pessoas[usuariologado].reais, cotacaoXRP);
-    scanf("%f", &comprar);
-    compra = cotacaoXRP * comprar;
-    taxa = ((cotacaoXRP * comprar) * 0.01);
-    verificacao(pessoas, usuariologado);
-    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /100.00 >=0) {
-      pessoas[usuariologado].xrp += comprar;
-      pessoas[usuariologado].reais -= (compra + taxa);
-      criaextrato(pessoas, usuariologado, '+', compra, "XRP", 0.01);
-      recibocompra(compra, taxa);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Você não possui reais necessarios para comprar essa quantia de "
-             "Ripple \n");
-      recibocompra(compra, taxa);
-      espera();
-    }
-    break;
-  default:
-    printf("Este comando não é valido, tente novamente. \n");
-    espera();
-    break;
+void depositar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+  limpaterminal(); 
+  float depositado = 0;
+  printf("|------------------------------------------------[Depositar]---------"
+         "---------------------------------------| \n");
+  printf("Quantos reais deseja depositar?\n");
+  scanf("%f", &depositado);
+  if (depositado < 0) {
+    printf("Valor Inválido");
   }
-  limpaterminal();
+  verificacao(pessoas, usuariologado);
+  pessoas[usuariologado].reais += depositado;
+  consultarsaldo(pessoas, usuariologado);
+  criaextrato(pessoas, usuariologado, '+', depositado, "REAIS", 0);
 }
 
 void sacar() {

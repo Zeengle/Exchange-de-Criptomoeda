@@ -41,5 +41,6 @@ void atualizar(pessoa pessoas[],float cotacaoBTC, float cotacaoETH, float cotaca
 void limpaterminal();
 void espera();
 void limpabuffer();
+int verificaCPF(char *cpf);
 
 #endif

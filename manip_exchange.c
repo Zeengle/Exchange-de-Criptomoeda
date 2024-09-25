@@ -51,6 +51,23 @@ limpaterminal();
         menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
       }
       limpabuffer();
+      if (strcmp(senhalogin, pessoas[i].senha) == 0) {
+        printf("Logado com sucesso\n");
+        usuariologado = i;
+        espera();
+        menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        return;
+      } else {
+        printf("Senha incorreta\n");
+        espera();
+        menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        return;
+      }
+    }
+  }
+  printf("CPF não cadastrado!\n");
+  espera();
+  menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
 }
 
 void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {

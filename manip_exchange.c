@@ -620,3 +620,35 @@ void verificacao(pessoa pessoas[], int usuariologado) {
   }
 }
 
+void escrever(pessoa pessoas[], int quantidade, float cotacaoBTC, float cotacaoETH, float cotacaoXRP) {
+    FILE *file = fopen("dados.bin", "wb");
+
+    fwrite(pessoas, sizeof(pessoa), 10, file);
+    fwrite(&cotacaoBTC, sizeof(float), 1, file);
+    fwrite(&cotacaoETH, sizeof(float), 1, file);
+    fwrite(&cotacaoXRP, sizeof(float), 1, file);
+
+    fclose(file);
+}
+
+void ler(FILE *file, pessoa pessoas[], int quantidade, float *cotacaoBTC, float *cotacaoETH, float *cotacaoXRP) {
+    file = fopen("dados.bin", "rb");
+
+    fread(pessoas, sizeof(pessoa), 10, file);
+    fread(cotacaoBTC, sizeof(float), 1, file);
+    fread(cotacaoETH, sizeof(float), 1, file);
+    fread(cotacaoXRP, sizeof(float), 1, file);
+
+    fclose(file);
+}
+
+int arquivoexiste(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file != NULL) {
+        fclose(file); 
+        return 1;  
+    }
+    return 0;
+}
+
+

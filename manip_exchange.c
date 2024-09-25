@@ -249,8 +249,31 @@ void vender(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXR
   limpaterminal();
 }
 
-void atualizar() {
+void atualizar(pessoa pessoas[],float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+    limpaterminal();
+    srand(time(NULL));
 
+    float variacaoBTC = cotacaoBTC*(((rand()%10)-5.00)/100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
+    variacaoBTC = roundf(variacaoBTC * 100.00)/100.00; // Arredondanda a variação pra 2 dígitos
+    cotacaoBTC = roundf((cotacaoBTC + variacaoBTC)*100.00)/100.00; // Soma na nova cotação
+
+    float variacaoETH = cotacaoETH*(((rand()%10)-5.00)/100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
+    variacaoETH = roundf(variacaoETH * 100.00)/100.00; // Arredondanda a variação pra 2 dígitos
+    cotacaoETH = roundf((cotacaoETH + variacaoETH)*100.00)/100.00; // Soma na nova cotação
+
+    float variacaoXRP = cotacaoXRP*(((rand()%10)-5.00)/100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
+    variacaoXRP = roundf(variacaoXRP * 100.00)/100.00; // Arredondanda a variação pra 2 dígitos
+    cotacaoXRP = roundf((cotacaoXRP + variacaoXRP)*100.00)/100.00; // Soma na nova cotação
+
+    printf("|------------------------------[Atualizando as cotações]------------------------------| \n");
+    printf(" Nova cotação do Bitcoin: %.2f Variação: %.2f%\n", cotacaoBTC, variacaoBTC);
+    printf(" Nova cotação do Etherium: %.2f Variação: %.2f%\n", cotacaoETH, variacaoETH);
+    printf(" Nova cotação do Ripple: %.2f Variação: %.2f%\n", cotacaoXRP, variacaoXRP);
+    printf(" Cotações atualizadas com sucesso.\n");
+    printf("|-------------------------------------------------------------------------------------| \n");
+    espera();
+    menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+    return;
 }
 
 void login(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXRP, int usuariologado) {

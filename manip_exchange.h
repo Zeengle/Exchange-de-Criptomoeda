@@ -47,5 +47,8 @@ void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor, c
 void verificacao(pessoa pessoas[], int usuariologado);
 void recibocompra(float compra, float taxa);
 void recibovenda(float conversao, float taxa);
+void ler(FILE *file, pessoa pessoas[], int quantidade, float *cotacaoBTC, float *cotacaoETH, float *cotacaoXRP);
+void escrever(pessoa pessoas[], int quantidade, float cotacaoBTC, float cotacaoETH, float cotacaoXRP);
+int arquivoexiste(const char *filename);
 
 #endif

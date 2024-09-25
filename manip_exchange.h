@@ -46,5 +46,6 @@ void printarcpf(char *cpf);
 void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor, char moeda[6], float taxa);
 void verificacao(pessoa pessoas[], int usuariologado);
 void recibocompra(float compra, float taxa);
+void recibovenda(float conversao, float taxa);
 
 #endif

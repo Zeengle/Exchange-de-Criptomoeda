@@ -1,3 +1,11 @@
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <stdlib.h>
+#include <ctype.h>//para usar o toupper nas escolhas
+#include "manip_exchange.h"
+#include <math.h>
+
 void consultarsaldo(pessoa pessoas[], int usuariologado) {
     printf("|------------------------------------------------[Saldo]-----------------------------------------------|\n");
     printf("Nome: %s\n",pessoas[usuariologado].nome);

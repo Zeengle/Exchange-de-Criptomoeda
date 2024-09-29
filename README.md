@@ -44,6 +44,6 @@ Bem-Vindo ao projeto em C da criação de um Exchange de criptomoedas do Curso (
 -
 
 ## 🏷️ Membros da Equipe
--    Arthur Barbosa Zanvetor  **R.A.**:
--    Fernando Bordin Lopes  **R.A.**:
--    Gabriel de Figueiredo Pereira Engle  **R.A.**: 241.240.24-1
+-    Arthur Barbosa Zanvetor  **R.A.**: 24.124.063-9
+-    Fernando Bordin Lopes  **R.A.**: 24.124.003-5
+-    Gabriel de Figueiredo Pereira Engle  **R.A.**: 24.124.024-1

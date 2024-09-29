@@ -32,6 +32,7 @@ Bem-Vindo ao projeto em C da criação de um Exchange de criptomoedas do Curso (
               clean:
                 rm -f main main-debug
           </pre></code>
+     - Depois de colar o código, apenas clique no botão "Run". Onde o programa será compilado e executado de forma correta.
 
 ## 🚀 Passo a Passo(Função por função).
 

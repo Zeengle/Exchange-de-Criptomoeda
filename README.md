@@ -35,19 +35,16 @@ Bem-Vindo ao projeto em C da criação de um Exchange de criptomoedas do Curso (
      - Depois de colar o código, apenas clique no botão "Run". Onde o programa será compilado e executado de forma correta.
 ### 1. Terminal
 -      Ao abrir o terminal de sua máquina, cole a seguinte linha de código.
-         <pre><code>
-   
-            gcc -o exchange main.c manip_exchange.c
-   
-         </pre></code>
+
+            <pre><code>
+                  gcc -o exchange main.c manip_exchange.c
+            </pre></code>
    
    -      E logo em seguida.
-   -  
-         <pre><code>
-      
-            ./exchange
 
-         </pre></code>
+            <pre><code>
+                  ./exchange
+            </pre></code>
       
 ## 🚀 Passo a Passo(Função por função).
 

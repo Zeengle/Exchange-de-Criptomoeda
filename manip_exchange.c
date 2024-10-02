@@ -1,10 +1,4 @@
 #include "manip_exchange.h"
-#include <ctype.h> //para usar o toupper nas escolhas
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 // Função que mostra o saldo do usuário
 void consultarsaldo(pessoa pessoas[], int usuariologado) {

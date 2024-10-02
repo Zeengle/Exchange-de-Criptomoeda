@@ -44,7 +44,7 @@ Bem-Vindo ao projeto em C da criação de um Exchange de criptomoedas do Curso (
 
 ### 1. Menu Inicial
 -    Aqui é apresentado ao usuario 3 opções.
--    **Cadastro**:  Caso não tenha uma conta no Exchange, crie sua conta aqui.
+-    **Cadastro**:  Caso não tenha uma conta no Exchange, crie sua conta aqui com um CPF válido, senha e um nome de usuário.
 -    **Login**:  Caso já tenha uma conta e deseja acessa-la.
 -    **Sair**: Sair da aplicação.
 

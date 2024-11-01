@@ -1,4 +1,5 @@
 #include "manip_exchange.h"
+#include "adm.h"
 #include <stdio.h>
 #include <string.h>
 #include <time.h>

@@ -19,7 +19,8 @@ void menu_inicial_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuar
         cadastro_adm(admin, pessoas, moedas, usuariologado, quantidade);
         return;
     case '2':
-      return;
+        login_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        return;
     case '3':
       escrever(pessoas, moedas, quantidade);
       escrever_admin(admin);
@@ -60,6 +61,7 @@ void menu_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado
           cadastrar_investidor_adm(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 2:
+          excluir_investidor_adm(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 3:
           break;
@@ -497,3 +499,48 @@ void cadastrar_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, i
   }
 }
 
+// Função que permite o cadastro de um novo usuário
+void excluir_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade) {
+  limpaterminal();
+  puts("Digite o CPF do investidor que deseja excluir: ");
+  char cpf_excluir[12];
+  char senha_adm[7];
+  scanf("%s", cpf_excluir);
+
+  if(strlen(cpf_excluir) != 11){
+    puts("CPF inválido, tente novamente");
+    limpabuffer();
+    espera();
+    menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+  }else{
+    for (int i = 0; i < 10; i++) {
+      if (strcmp(cpf_excluir, pessoas[i].CPF) == 0){
+        puts("Digite sua senha de ADM para prosguir: ");
+        scanf("%s", senha_adm);
+        if(strlen(senha_adm) != 6){
+          puts("Senha inválida, tente novamente");
+          limpabuffer();
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        }else{
+          if(strcmp(senha_adm, pessoas[usuariologado].senha)!=0){
+            puts("Senha inválida, tente novamente");
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }else{
+            // excluindo
+            memmove(&pessoas[i], &pessoas[i + 1], (9 - i - 1) * sizeof(pessoa));
+            puts("Usuário removido com sucesso");
+            limpabuffer();
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }
+        }
+      }
+    }
+  }
+  puts("Usuário não encontrado, tente novamente");
+  limpabuffer();
+  espera();
+  menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+}

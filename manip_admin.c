@@ -363,5 +363,51 @@ void cadastro_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariolo
 
 //Função de login dos administradores
 void login_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+    limpaterminal();
+    char cpflogin[12];
+    char senhalogin[7];
+
+    printf("|------------------------------[Login ADM]------------------------------|"
+            "\n");
+    printf("Digite o CPF: ");
+    scanf("%s", cpflogin);
+
+    if (strlen(cpflogin) != 11) {
+        printf("CPF inválido!\n");
+        limpabuffer();
+        espera();
+        limpaterminal();
+        menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+    }
+    limpabuffer();
+
+    for (int i = 0; i < 10; i++) {
+        if (strcmp(cpflogin, admin[i].cpf) == 0) {
+          printf("Digite sua senha: ");
+          scanf("%s", senhalogin);
+          if (strlen(senhalogin) != 6) {
+              printf("Senha inválida!\n");
+              limpabuffer();
+              espera();
+              menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }
+          limpabuffer();
+          if (strcmp(senhalogin, admin[i].senha) == 0) {
+              printf("Logado com sucesso\n");
+              usuariologado = i;
+              espera();
+              menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+              return;
+          } else {
+              printf("Senha incorreta\n");
+              espera();
+              menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+              return;
+          }
+        }
+    }
+    printf("CPF não cadastrado!\n");
+    espera();
+    menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
 }
 

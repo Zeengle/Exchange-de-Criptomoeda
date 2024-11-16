@@ -257,3 +257,7 @@ int arquivoexiste(const char *filename) {
   }
   return 0;
 }
+
+void escrever_admin(admins admin[]) {
+
+}

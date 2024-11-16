@@ -73,8 +73,10 @@ void menu_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado
           consultar_saldo_adm(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 6:
+          consultar_extrato_adm (admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 7:
+          atualizar(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       default:
           puts("Opção Inválida, tente novamente");
@@ -755,5 +757,26 @@ void consultarextrato(pessoa pessoas[], int usuariologado) {
   }
   espera();
   limpaterminal();
+}
+
+// Função que atualizar cotações
+void atualizar(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade) {
+  limpaterminal();
+  srand(time(NULL));
+
+    for(int i=0; i<quantidade; i++){
+      float variacao = moedas[i].cotacao * (((rand() % 10) - 5.00) / 100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
+      variacao = roundf(variacao * 100.00) / 100.00; // Arredondanda a variação pra 2 dígitos
+      moedas[i].cotacao = roundf((moedas[i].cotacao + variacao) * 100.00) / 100.00; // Soma na nova cotação
+    }
+
+  printf("|------------------------------[Atualizando as cotações]------------------------------| \n");
+  for(int i=0; i<quantidade; i++){
+    printf("%s: %.2f \n", moedas[i].nome, moedas[i].cotacao);
+  }
+  printf("|-------------------------------------------------------------------------------------| \n");
+  limpabuffer();
+  espera();
+  menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
 }
 

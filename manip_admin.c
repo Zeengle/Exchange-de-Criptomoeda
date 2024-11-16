@@ -258,6 +258,18 @@ int arquivoexiste(const char *filename) {
   return 0;
 }
 
-void escrever_admin(admins admin[]) {
+//-------------------------------FUNÇÕES DO BINÁRIO---------------------------
 
+//Função de escrever os administradores
+void escrever_admin(admins admin[]) {
+    FILE *file_admin = fopen("admin.bin", "wb");
+
+    if (file_admin == NULL) {
+        printf("Erro ao criar o arquivo admin.bin\n");
+        return;
+    }
+
+    fwrite(admin, sizeof(admins), 10, file_admin);
+
+    fclose(file_admin);
 }

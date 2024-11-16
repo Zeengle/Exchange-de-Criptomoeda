@@ -50,4 +50,7 @@ int arquivoexiste(const char *filename);
 void menu_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 void menu_inicial_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 
+// /*---------------------------------------PROTÓTIPOS DOS BINÁRIOS---------------------------------------*/
+
+void escrever_admin(admins admin[]);
 #endif

@@ -547,4 +547,50 @@ void excluir_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int
 
 //Função de cadastrar novas criptomoedas
 void cadastrar_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+  char nome[100];
+  
+  puts("Digite o nome, sigla da criptomoeda que deseja cadastrar: ");
+  scanf("%s", nome);
+
+  if(strlen(nome) > 3){
+    puts("Nome inválido, pode ter no max 3 letras");
+    limpabuffer();
+    espera();
+    menu_adm(admin, pessoas, moedas, usuariologado, quantidade);    
+  }
+
+  for(int i=0; i<quantidade; i++){
+    if(strcmp(moedas[i].nome, nome)==0){
+      puts("Nome inválido, já existe");
+      limpabuffer();
+      espera();
+      menu_adm(admin, pessoas, moedas, usuariologado, quantidade);    
+    }
+  }
+
+  quantidade = quantidade+1;
+  moeda *temp = realloc(moedas, quantidade * sizeof(moeda));
+  moedas = temp;
+
+  float cotacao, taxa_compra, taxa_venda;
+  
+  for(int i=0; i<10; i++){
+    moedas[quantidade-1].carteiras[i] = 0.00;
+  }
+  
+  strcpy(moedas[quantidade-1].nome, nome);
+  puts("Digite a cotação inicial da moeda: ");
+  scanf("%f", &cotacao);
+  moedas[quantidade-1].cotacao = cotacao;
+  puts("Digite um número inteiro da taxa de compra (OBS: o número será dividio por 100): ");  
+  scanf("%f", &taxa_compra);
+  moedas[quantidade-1].taxa_compra = taxa_compra/100.00;
+  puts("Digite um número inteiro da taxa de venda (OBS: o número será dividio por 100): ");  
+  scanf("%f", &taxa_venda);
+  moedas[quantidade-1].taxa_venda = taxa_venda/100.00;
+
+  puts("Moeda adicionanda com sucesso");
+  limpabuffer();
+  espera();
+  menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
 }

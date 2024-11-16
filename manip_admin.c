@@ -544,3 +544,7 @@ void excluir_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int
   espera();
   menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
 }
+
+//Função de cadastrar novas criptomoedas
+void cadastrar_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+}

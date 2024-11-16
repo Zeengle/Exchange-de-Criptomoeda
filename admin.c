@@ -9,6 +9,14 @@ int main (){
     moeda *moedas = NULL;
     int usuariologado = -1;
 
+    int verificacao = arquivoexiste("admin.bin");
+    if (verificacao == 0){
+        escrever_admin(admin);
+    }
+    else{
+        ler_admin(&admin, file_admin);
+    }
+    
     int verificacao2 = arquivoexiste("dados.bin");
 
     if(verificacao2 == 0){ // O arquivo existe

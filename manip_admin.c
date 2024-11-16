@@ -64,8 +64,10 @@ void menu_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado
           excluir_investidor_adm(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 3:
+          cadastrar_criptomoeda(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 4:
+          excluir_criptomoeda(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 5:
           break;
@@ -594,3 +596,54 @@ void cadastrar_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int 
   espera();
   menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
 }
+
+//função de excluir criptomoedas
+void excluir_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+  limpaterminal();
+  puts("Digite o nome da moeda que deseja excluir: ");
+  char nome[4];
+  char senha_adm[7];
+  scanf("%s", nome);
+
+  if(strlen(nome) != 3){
+    puts("CPF inválido, tente novamente");
+    limpabuffer();
+    espera();
+    menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+  }else{
+    for (int i = 0; i < quantidade; i++) {
+      if (strcmp(nome, moedas[i].nome) == 0){
+        puts("Digite sua senha de ADM para prosguir: ");
+        scanf("%s", senha_adm);
+        if(strlen(senha_adm) != 6){
+          puts("Senha inválida, tente novamente");
+          limpabuffer();
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        }else{
+          if(strcmp(senha_adm, pessoas[usuariologado].senha)!=0){
+            puts("Senha inválida, tente novamente");
+
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }else{
+            //excluindo
+            memmove(&moedas[i], &moedas[i + 1], (quantidade - i - 1) * sizeof(moeda));
+            quantidade--;
+
+            puts("Moeda removido com sucesso");
+            limpabuffer();
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }
+        }
+      }
+    }
+  }
+  puts("Moeda não encontrado, tente novamente");
+  limpabuffer();
+  espera();
+  menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+}
+
+

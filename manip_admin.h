@@ -58,6 +58,6 @@ void ler_admin(admins admin[] , FILE *file_admin);
 /*---------------------------------PROTÓTIPOS FUNÇÕES PRINCIPAIS---------------------------------*/
 
 void cadastro_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
-
+void login_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 
 #endif

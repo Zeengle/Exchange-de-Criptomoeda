@@ -21,6 +21,7 @@ void menu_inicial_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuar
       return;
     case '3':
       escrever(pessoas, moedas, quantidade);
+      escrever_admin(admin);
       exit(0);
       return;
     default:

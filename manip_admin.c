@@ -699,3 +699,11 @@ void consultar_saldo_adm (admins admin[],pessoa pessoas[], moeda *moedas, int us
   menu_adm(admin, pessoas, moedas, usuariologado, quantidade);  
 }
 
+void consultar_extrato_adm (admins admin[],pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+
+}
+
+//Função de consultar extrato do investidor
+void consultarextrato(pessoa pessoas[], int usuariologado) {
+}
+

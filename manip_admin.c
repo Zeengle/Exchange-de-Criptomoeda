@@ -699,11 +699,61 @@ void consultar_saldo_adm (admins admin[],pessoa pessoas[], moeda *moedas, int us
   menu_adm(admin, pessoas, moedas, usuariologado, quantidade);  
 }
 
+//Função de consultar o extrato do investidor que o admin selecionar
 void consultar_extrato_adm (admins admin[],pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+  limpaterminal();
+  puts("Digite o CPF do investidor que deseja ver o saldo: ");
+  char cpf[12];
+  char senha_adm[7];
+  scanf("%s", cpf);
 
+  if(strlen(cpf) != 11){
+    puts("CPF inválido, tente novamente");
+    limpabuffer();
+    espera();
+    menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+  }else{
+    for (int i = 0; i < 10; i++) {
+      if (strcmp(cpf, pessoas[i].CPF) == 0){
+        puts("Digite sua senha de ADM para proseguir: ");
+        scanf("%s", senha_adm);
+        if(strlen(senha_adm) != 6){
+          puts("Senha inválida, tente novamente");
+          limpabuffer();
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        }else{
+          if(strcmp(senha_adm, pessoas[usuariologado].senha)!=0){
+            puts("Senha inválida, tente novamente");
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }else{
+            limpabuffer();
+            consultarextrato(pessoas, i);
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }
+        }
+      }
+    }
+  }
+  puts("Usuário não encontrado, tente novamente");
+  limpabuffer();
+  espera();
+  menu_adm(admin, pessoas, moedas, usuariologado, quantidade);  
 }
 
 //Função de consultar extrato do investidor
 void consultarextrato(pessoa pessoas[], int usuariologado) {
+  printf("|------------------------------[Extrato]-----------------------------"
+         "-\n");
+  printf("%-18s\t%-6s\t%-10s\t%-6s\t%-6s\t%-12s",
+         "DATA/HORA", "SINAL", "VALOR", "MOEDA", "TAXA", "QUANT MOEDA\n");
+  for (int i = 0; i < 100; i++) {
+    if (pessoas[usuariologado].ext[i][0] != '\0') {
+      printf("%s\n", pessoas[usuariologado].ext[i]);
+    }
+  }
+  espera();
+  limpaterminal();
 }
 

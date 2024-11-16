@@ -70,6 +70,7 @@ void menu_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado
           excluir_criptomoeda(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 5:
+          consultar_saldo_adm(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 6:
           break;
@@ -646,4 +647,55 @@ void excluir_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int us
   menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
 }
 
+//Função do administrador de consultar o saldo dos invstidores
+void consultar_saldo_adm (admins admin[],pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+  limpaterminal();
+  puts("Digite o CPF do investidor que deseja ver o saldo: ");
+  char cpf[12];
+  char senha_adm[7];
+  scanf("%s", cpf);
+
+  if(strlen(cpf) != 11){
+    puts("CPF inválido, tente novamente");
+    limpabuffer();
+    espera();
+    menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+  }else{
+    for (int i = 0; i < 10; i++) {
+      if (strcmp(cpf, pessoas[i].CPF) == 0){
+        puts("Digite sua senha de ADM para proseguir: ");
+        scanf("%s", senha_adm);
+        if(strlen(senha_adm) != 6){
+          puts("Senha inválida, tente novamente");
+          limpabuffer();
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        }else{
+          if(strcmp(senha_adm, pessoas[usuariologado].senha)!=0){
+            puts("Senha inválida, tente novamente");
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }else{
+            limpaterminal();
+            printf("Nome: %s\n", pessoas[i].nome);
+            printf("CPF: ");
+            printarcpf(pessoas[i].CPF);
+            printf("\nReais: %.2f", pessoas[i].reais);
+            for(int j=0; j<quantidade; j++){
+              printf("\n%s: %.2f", moedas[j].nome, moedas[j].carteiras[i]);
+            }
+            printf("\n");
+            limpabuffer();
+            espera();
+            menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          }
+        }
+      }
+    }
+  }
+  puts("Usuário não encontrado, tente novamente");
+  limpabuffer();
+  espera();
+  menu_adm(admin, pessoas, moedas, usuariologado, quantidade);  
+}
 

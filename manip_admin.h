@@ -63,5 +63,6 @@ void cadastrar_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, i
 void excluir_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 void cadastrar_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 void excluir_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
+void consultar_saldo_adm (admins admin[],pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 
 #endif

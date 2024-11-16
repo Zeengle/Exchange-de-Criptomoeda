@@ -57,6 +57,7 @@ void menu_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado
           menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
           return;
       case 1:
+          cadastrar_investidor_adm(admin, pessoas, moedas, usuariologado, quantidade);
           break;
       case 2:
           break;
@@ -409,5 +410,90 @@ void login_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologad
     printf("CPF não cadastrado!\n");
     espera();
     menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+}
+
+// Função que permite o cadastro de um novo usuário
+void cadastrar_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade) {
+  limpaterminal();
+  char cpfcadastro[12];
+  char senhacadastro[7];
+  int cadastrados = 0;
+
+  printf("|------------------------------[Cadastro Investidor]----------------------------"
+         "|\n");
+  if (cadastrados == 9) {
+    printf("Limite de cadastro atingido!\n");
+    espera();
+    menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+    return;
+  } else {
+    printf("Digite seu CPF (Só pode possuir 11 dígitos): ");
+    scanf("%s", cpfcadastro);
+    if (strlen(cpfcadastro) != 11) {
+      printf("CPF inválido\n");
+      limpabuffer();
+      espera();
+      menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+      return;
+    }
+    limpabuffer();
+    for (int i = 0; i < 10; i++) {
+      if ((strcmp(cpfcadastro, pessoas[i].CPF) == 0)) {
+        printf("CPF já cadastrado\n");
+        espera();
+        menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        return;
+      } else if ((strlen(cpfcadastro) != 11) ||
+                 (verificaCPF(cpfcadastro) == 0)) {
+        printf("CPF inválido!\n");
+        espera();
+        menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        return;
+      } else if (pessoas[i].CPF[0] == '\0') {
+        printf("Digite sua senha (numérica com 6 dígitos): ");
+        scanf("%s", senhacadastro);
+        if (strlen(senhacadastro) != 6) {
+          limpabuffer();
+          printf("Senha inválida\n");
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          return;
+        }
+        limpabuffer();
+        if (strlen(senhacadastro) == 6) {
+          strcpy(pessoas[i].CPF, cpfcadastro);
+          strcpy(pessoas[i].senha, senhacadastro);
+          while(1){
+            printf("Digite seu nome: ");
+            fgets(pessoas[i].nome, 100, stdin);
+            size_t len = strlen(pessoas[i].nome);
+            if (len > 0 && pessoas[i].nome[len - 1] == '\n') {
+              pessoas[i].nome[len - 1] = '\0';
+            }
+            
+            if (strlen(pessoas[i].nome) < 5) {
+              printf("Nome inválido (DEVE POSSUIR 5 LETRAS), tente novamente!\n");
+            }else{
+              break;
+            }
+          }
+          pessoas[i].reais = 0.00;
+          for(int j = 0; j< quantidade; j++){
+            moedas[j].carteiras[i] = 0.00;
+          }
+          cadastrados += 1;
+          printf("Cadastro realizado com sucesso!\n");
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          return;
+        } else {
+          printf("Senha inválida. Deve ter 6 dígitos.\n");
+          espera();
+          menu_adm(admin, pessoas, moedas, usuariologado, quantidade);
+          return;
+        }
+      }
+    }
+  }
 }
 

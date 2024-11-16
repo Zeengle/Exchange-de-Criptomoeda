@@ -273,3 +273,18 @@ void escrever_admin(admins admin[]) {
 
     fclose(file_admin);
 }
+
+//Função de ler os administradores
+void ler_admin(admins admin[] , FILE *file_admin) {
+    file_admin = fopen("admin.bin", "rb");
+
+    if (file_admin == NULL) {
+        printf("Erro ao abrir o arquivo admin.bin\n");
+        return;
+    }
+
+    fread(admin, sizeof(admins), 10, file_admin);
+
+    fclose(file_admin);
+    printf("Dados do administrador carregados com sucesso!\n");
+}

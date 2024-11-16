@@ -1,21 +1,17 @@
 #include "manip_exchange.h"
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <stdlib.h>
-#include <ctype.h>//para usar o toupper nas escolhas
-#include <math.h>
 
 // Função que mostra o saldo do usuário
-void consultarsaldo(pessoa pessoas[], int usuariologado) {
+void consultarsaldo(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   printf("|------------------------------------------------[Saldo]-------------"
          "----------------------------------|\n");
   printf("Nome: %s\n", pessoas[usuariologado].nome);
   printf("CPF: ");
   printarcpf(pessoas[usuariologado].CPF);
-  printf("\nReais: %.2f\nBitcoin: %.2f\nEthereum: %.2f\nRipple: %.2f\n",
-         pessoas[usuariologado].reais, pessoas[usuariologado].btc,
-         pessoas[usuariologado].eth, pessoas[usuariologado].xrp);
+  printf("\nReais: %.2f", pessoas[usuariologado].reais);
+  for(int i=0; i<quantidade; i++){
+    printf("\n%s: %.2f", moedas[i].nome, moedas[i].carteiras[usuariologado]);
+  }
+  printf("\n");
   espera();
   limpaterminal();
 }
@@ -25,9 +21,8 @@ void consultarsaldo(pessoa pessoas[], int usuariologado) {
 void consultarextrato(pessoa pessoas[], int usuariologado) {
   printf("|------------------------------[Extrato]-----------------------------"
          "-\n");
-  printf("%-18s\t%-6s\t%-10s\t%-6s\t%-6s\t%-12s\t%-12s\t%-12s\t%-12s\n",
-         "DATA/HORA", "SINAL", "VALOR", "MOEDA", "TAXA", "QUANT REAIS",
-         "QUANT BTC", "QUANT ETH", "QUANT XRP \n");
+  printf("%-18s\t%-6s\t%-10s\t%-6s\t%-6s\t%-12s",
+         "DATA/HORA", "SINAL", "VALOR", "MOEDA", "TAXA", "QUANT MOEDA\n");
   for (int i = 0; i < 100; i++) {
     if (pessoas[usuariologado].ext[i][0] != '\0') {
       printf("%s\n", pessoas[usuariologado].ext[i]);
@@ -38,7 +33,7 @@ void consultarextrato(pessoa pessoas[], int usuariologado) {
 }
 
 // Função que realiza o depósito de dinheiro na conta do usuário
-void depositar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+void depositar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   float depositado = 0;
   printf("|------------------------------------------------[Depositar]---------"
@@ -52,17 +47,16 @@ void depositar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotac
     limpabuffer();
     printf("Valor Inválido\n");
     espera();
-    menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-    return;
+    menu(pessoas, moedas, usuariologado, quantidade);
   }
   verificacao(pessoas, usuariologado);
   pessoas[usuariologado].reais += depositado;
-  consultarsaldo(pessoas, usuariologado);
-  criaextrato(pessoas, usuariologado, '+', depositado, "REAIS", 0);
+  consultarsaldo(pessoas, moedas, usuariologado, quantidade);
+  criaextrato(pessoas, moedas, usuariologado, '+', depositado, "REAIS", 0, pessoas[usuariologado].reais);
 }
 
 // Função que realiza o saque de dinheiro da conta do usuário
-void sacar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+void sacar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   float sacado = 0;
   printf("|------------------------------------------------[Sacar]-------------"
@@ -75,305 +69,145 @@ void sacar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXR
     limpabuffer();
     printf("Valor Inválido\n");
     espera();
-    menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-    return;
+    menu(pessoas, moedas, usuariologado, quantidade);
   }
   verificacao(pessoas, usuariologado);
   if (sacado <= pessoas[usuariologado].reais) {
     pessoas[usuariologado].reais -= sacado;
-    consultarsaldo(pessoas, usuariologado);
-    criaextrato(pessoas, usuariologado, '-', sacado, "REAIS", 0);
+    consultarsaldo(pessoas, moedas, usuariologado, quantidade);
+    criaextrato(pessoas, moedas, usuariologado, '-', sacado, "REAIS", 0, pessoas[usuariologado].reais);
   } else {
     printf("Impossível sacar este valor.\n");
     espera();
-    menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+    menu(pessoas, moedas, usuariologado, quantidade);
   }
 }
 
-// Função que permite a compra de criptomoedas pelo usuário
-void comprar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+//Função que permite a compra de criptomoedas pelo usuário
+void comprar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
-  char escolha;
-  float comprar, taxa, compra;
-  printf("|------------------------------------------------[Comprar "
-         "Cripto]------------------------------------------------|\n");
-  printf("Cotação das "
-         "Criptomoedas:\n\tBitcoin:\t%.2f\n\tEthereum:\t%.2f\n\tRipple:\t\t%."
-         "2f\nQue moeda deseja comprar? (B/E/R) \n",
-         cotacaoBTC, cotacaoETH, cotacaoXRP);
-  scanf(" %c", &escolha);
-  escolha = toupper(escolha);
-  // Fazer uma função para poupar linhas aqui, onde a mesma recebe as opc
-  switch (escolha) {
-  case 'B':
-    limpaterminal();
-    printf("Você possui: R$%.2f\nCotação do Bitcoin: %.2f Taxa: 2.00%\nQuantos "
-           "Bitcoins deseja comprar? \n",
-           pessoas[usuariologado].reais, cotacaoBTC);
-    scanf("%f", &comprar);
-    if(comprar <= 0){
-      limpabuffer();
-      printf("Valor de compra inválido, tente novamente!\n");
-      espera();
-      menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-      return;
+  int escolha;
+  printf("|------------------------------------------------[Comprar Cripto]------------------------------------------------|\n");
+    puts("Cotação das moedas: ");
+    for(int i = 0; i < quantidade; i++){
+        printf("%s: %.2f \n", moedas[i].nome, moedas[i].cotacao);
     }
-    compra = cotacaoBTC * comprar;
-    taxa = ((cotacaoBTC * comprar) * 0.02);
-    verificacao(pessoas, usuariologado);
-    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /
-            100.00 >=
-        0) { // verificar se vai dar valor negativo com a taxa aplicada
-      pessoas[usuariologado].btc += comprar; // adiciona os bitcoins comprados
-      pessoas[usuariologado].reais -=
-          (compra + taxa); // faz a taxação na cotação e adiciona nos reais
-      criaextrato(pessoas, usuariologado, '+', compra, "BTC", 0.02);
-      recibocompra(compra, taxa);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Você não possui reais necessarios para comprar essa quantia de "
-             "Bitcoin \n");
-      recibocompra(compra, taxa);
-      espera();
-    }
-    break;
-  case 'E':
-    limpaterminal();
-    printf("Você possui: R$%.2f\nCotação do Ethereum: %.2f Taxa: "
-           "1.00%\nQuantos Ethereum deseja comprar? \n",
-           pessoas[usuariologado].reais, cotacaoETH);
-    scanf("%f", &comprar);
-    if(comprar <= 0){
-      limpabuffer();
-      printf("Valor de compra inválido, tente novamente!\n");
-      espera();
-      menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-      return;
-    }
-    compra = cotacaoETH * comprar;
-    taxa = ((cotacaoETH * comprar) * 0.01);
-    verificacao(pessoas, usuariologado);
-    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /
-            100.00 >=
-        0) {
-      pessoas[usuariologado].eth += comprar;
-      pessoas[usuariologado].reais -= (compra + taxa);
-      criaextrato(pessoas, usuariologado, '+', compra, "ETH", 0.01);
-      recibocompra(compra, taxa);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Você não possui reais necessarios para comprar essa quantia de "
-             "Ethereum \n");
-      recibocompra(compra, taxa);
-      espera();
-    }
-    break;
-  case 'R':
-    limpaterminal();
-    printf("Você possui:\tR$%.2f\nCotação do Ripple:\t%.2f Taxa: "
-           "1.00%\nQuantos Ripple deseja comprar? \n",
-           pessoas[usuariologado].reais, cotacaoXRP);
-    scanf("%f", &comprar);
-    if(comprar <= 0){
-      limpabuffer();
-      printf("Valor de compra inválido, tente novamente!\n");
-      espera();
-      menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-      return;
-    }
-    compra = cotacaoXRP * comprar;
-    taxa = ((cotacaoXRP * comprar) * 0.01);
-    verificacao(pessoas, usuariologado);
-    if (roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) /
-            100.00 >=
-        0) {
-      pessoas[usuariologado].xrp += comprar;
-      pessoas[usuariologado].reais -= (compra + taxa);
-      criaextrato(pessoas, usuariologado, '+', compra, "XRP", 0.01);
-      recibocompra(compra, taxa);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Você não possui reais necessarios para comprar essa quantia de "
-             "Ripple \n");
-      recibocompra(compra, taxa);
-      espera();
-    }
-    break;
-  default:
-    printf("Este comando não é valido, tente novamente. \n");
-    espera();
-    break;
-  }
+    printf("\n");
+
+    puts("Digite o numero da moeda que deseja comprar, começando por 1: ");
+    scanf("%d", &escolha);
+    escolha--;
+    float qtd_compra;
+
+    if(escolha >= 0 && escolha < quantidade){
+        printf("Digite a quantidade de %s que deseja comprar com taxa: %.2f ? \n", moedas[escolha].nome, moedas[escolha].taxa_compra);
+        scanf("%f", &qtd_compra);
+        float compra = qtd_compra * moedas[escolha].cotacao;
+        float taxa = compra * moedas[escolha].taxa_compra;
+        if(qtd_compra <=0){
+            limpabuffer();
+            printf("Quantidade inválida, tente novamente");
+            espera();
+            menu(pessoas, moedas, usuariologado, quantidade);
+        }else{
+            verificacao(pessoas, usuariologado);
+            if(roundf((pessoas[usuariologado].reais - (compra + taxa)) * 100.00) / 100.00 >= 0){
+              moedas[escolha].carteiras[usuariologado] += qtd_compra; // adiciona os bitcoins comprados
+              pessoas[usuariologado].reais -= (compra + taxa); // faz a taxação na cotação e adiciona nos reais
+              criaextrato(pessoas, moedas, usuariologado, '+', compra, moedas[escolha].nome, moedas[escolha].taxa_compra, moedas[escolha].carteiras[usuariologado]);
+              recibocompra(compra, taxa);
+              consultarsaldo(pessoas, moedas, usuariologado, quantidade);
+            }else{
+              recibocompra(compra, taxa);
+              printf("Você não possui reais necessarios para comprar essa quantia\n");
+              espera();
+            }
+        }
+    }else{
+        limpabuffer();
+        puts("Opção inválida, tente novamente");
+        espera();
+        menu(pessoas, moedas, usuariologado, quantidade);
+      }
   limpaterminal();
 }
 
 // Função que permite a venda de criptomoedas pelo usuário
-void vender(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+void vender(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
-  char escolha;
-  float venda, taxa, conversao;
-  printf("|------------------------------------------------[Vender "
-         "Cripto]------------------------------------------------| \n");
-  printf("Cotação das "
-         "Criptomoedas:\n\tBitcoin:\t%.2f\n\tEthereum:\t%.2f\n\tRipple:\t\t%."
-         "2f\n\nQue moeda deseja vender? (B/E/R)\n",
-         cotacaoBTC, cotacaoETH, cotacaoXRP);
-  scanf(" %c", &escolha);
-  escolha = toupper(escolha);
-  switch (escolha) {
-  case 'B':
-    limpaterminal();
-    printf("Você possui:\t%.2f BTC\nCotação do Bitcoin:\t%.2f\n\nQuantos "
-           "Bitcoins deseja vender? ",
-           pessoas[usuariologado].btc, cotacaoBTC);
-    scanf("%f", &venda);
-    if(venda <= 0){
-      limpabuffer();
-      printf("Valor de compra inválido, tente novamente!\n");
-      espera();
-      menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-      return;
-    }
-    taxa = (venda * cotacaoBTC * 0.03);
-    conversao = cotacaoBTC * venda;
-    verificacao(pessoas, usuariologado);
-    if (pessoas[usuariologado].btc - venda >= 0) {
-      // printf("Até aqui foi"); DEBUGANDO...
-      pessoas[usuariologado].btc -= venda;
-      pessoas[usuariologado].reais += (conversao - taxa);
-      printf("Venda realizada com sucesso!\n");
-      recibovenda(conversao, taxa);
-      criaextrato(pessoas, usuariologado, '-', conversao, "BTC", 0.02);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Saldo de Bitcoins indisponível. \n");
-      recibovenda(conversao, taxa);
-      espera();
-    }
-    break;
-  case 'E':
-    limpaterminal();
-    printf("Você possui:\t%.2f ETH\nCotação do Ethereum:\t%.2f\n\nQuantos "
-           "Ethereuns deseja vender? ",
-           pessoas[usuariologado].eth, cotacaoETH);
-    scanf("%f", &venda);
-    if(venda <= 0){
-      limpabuffer();
-      printf("Valor de compra inválido, tente novamente!\n");
-      espera();
-      menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-      return;
-    }
-    taxa = (venda * cotacaoETH * 0.02);
-    conversao = cotacaoETH * venda;
-    verificacao(pessoas, usuariologado);
-    if (pessoas[usuariologado].eth - venda >= 0) {
-      // printf("Até aqui foi"); DEBUGANDO...
-      pessoas[usuariologado].eth -= venda;
-      pessoas[usuariologado].reais +=
-          ((venda * cotacaoETH) - (venda * cotacaoETH * 0.02));
-      printf("Venda realizada com sucesso!\n");
-      printf("Você ficou com :R$%.2f e com %.2f ETH",
-             pessoas[usuariologado].reais, pessoas[usuariologado].eth);
-      recibovenda(conversao, taxa);
-      criaextrato(pessoas, usuariologado, '-', conversao, "ETH", 0.02);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Saldo de Etherium indisponível. \n");
-      recibovenda(conversao, taxa);
-    }
-    break;
-  case 'R':
-    limpaterminal();
-    printf("Você possui:\t%.2f XRP\nCotação do Ripple:\t%.2f\n\nQuantos "
-           "Ripples deseja vender? ",
-           pessoas[usuariologado].xrp, cotacaoXRP);
-    scanf("%f", &venda);
-    if(venda <= 0){
-      limpabuffer();
-      printf("Valor de compra inválido, tente novamente!\n");
-      espera();
-      menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-      return;
-    }
-    taxa = (venda * cotacaoETH * 0.02);
-    conversao = cotacaoETH * venda;
-    verificacao(pessoas, usuariologado);
-    if (pessoas[usuariologado].xrp - venda >= 0) {
-      // printf("Até aqui foi"); DEBUGANDO...
-      pessoas[usuariologado].xrp -= venda;
-      pessoas[usuariologado].reais +=
-          ((venda * cotacaoXRP) - (venda * cotacaoXRP * 0.01));
-      printf("Venda realizada com sucesso!\n");
-      printf("Você ficou com :R$%.2f e com %.2f XRP",
-             pessoas[usuariologado].reais, pessoas[usuariologado].xrp);
+  int escolha;
 
-      criaextrato(pessoas, usuariologado, '-', conversao, "XRP", 0.02);
-      consultarsaldo(pessoas, usuariologado);
-    } else {
-      printf("Saldo de Ripple indisponível.");
-      recibovenda(conversao, taxa);
-      espera();
+  printf("|------------------------------------------------[Vender Cripto]------------------------------------------------| \n");
+  puts("Cotação das moedas: ");
+    for(int i = 0; i<quantidade; i++){
+      printf("%s: %.2f \n", moedas[i].nome, moedas[i].cotacao);
     }
-    break;
-  default:
-    printf("Este comando não é valido, tente novamente");
-    espera();
-    break;
+    printf("\n");
+  puts("Moedas que possui: ");
+  for(int i=0; i<quantidade; i++){
+    printf("\n%s: %.2f", moedas[i].nome, moedas[i].carteiras[usuariologado]);
   }
+
+    puts("Digite o numero da moeda que deseja vender, começando por 1: ");
+    scanf("%d", &escolha);
+    escolha--;
+    float qtd_venda;
+    
+    if(escolha >= 0 && escolha < quantidade){
+        printf("Digite a quantidade de %s que deseja vender com taxa: %.2f ? \n", moedas[escolha].nome, moedas[escolha].taxa_compra);
+        scanf("%f", &qtd_venda);
+        float venda = qtd_venda * moedas[escolha].cotacao;
+        float taxa = (qtd_venda * moedas[escolha].cotacao * moedas[escolha].taxa_venda);
+        if(qtd_venda <=0){
+            limpabuffer();
+            printf("Quantidade inválida, tente novamente");
+            espera();
+            menu(pessoas, moedas, usuariologado, quantidade);
+        }else{
+            verificacao(pessoas, usuariologado);
+            if(moedas[escolha].carteiras[usuariologado] - qtd_venda >=0){
+              moedas[escolha].carteiras[usuariologado] -= qtd_venda;
+              pessoas[usuariologado].reais += (venda - taxa); 
+              criaextrato(pessoas, moedas, usuariologado, '-', venda, moedas[escolha].nome, moedas[escolha].taxa_venda, moedas[escolha].carteiras[usuariologado]);
+              recibovenda(venda, taxa);
+              consultarsaldo(pessoas, moedas, usuariologado, quantidade);
+            }else{
+              recibovenda(venda, taxa);
+              printf("Você não possui a quantidade de moedas necessarias para vender essa quantia\n");
+              espera();
+            }
+        }
+    }else{
+        limpabuffer();
+        puts("Opção inválida, tente novamente");
+        espera();
+        menu(pessoas, moedas, usuariologado, quantidade);
+      }
   limpaterminal();
 }
 
-// Função que permite a troca de criptomoedas entre usuários
-void atualizar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+// Função que atualizar cotações
+void atualizar(pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   srand(time(NULL));
 
-  float variacaoBTC =
-      cotacaoBTC *
-      (((rand() % 10) - 5.00) /
-       100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
-  variacaoBTC = roundf(variacaoBTC * 100.00) /
-                100.00; // Arredondanda a variação pra 2 dígitos
-  cotacaoBTC = roundf((cotacaoBTC + variacaoBTC) * 100.00) /
-               100.00; // Soma na nova cotação
+    for(int i=0; i<quantidade; i++){
+      float variacao = moedas[i].cotacao * (((rand() % 10) - 5.00) / 100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
+      variacao = roundf(variacao * 100.00) / 100.00; // Arredondanda a variação pra 2 dígitos
+      moedas[i].cotacao = roundf((moedas[i].cotacao + variacao) * 100.00) / 100.00; // Soma na nova cotação
+    }
 
-  float variacaoETH =
-      cotacaoETH *
-      (((rand() % 10) - 5.00) /
-       100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
-  variacaoETH = roundf(variacaoETH * 100.00) /
-                100.00; // Arredondanda a variação pra 2 dígitos
-  cotacaoETH = roundf((cotacaoETH + variacaoETH) * 100.00) /
-               100.00; // Soma na nova cotação
-
-  float variacaoXRP =
-      cotacaoXRP *
-      (((rand() % 10) - 5.00) /
-       100.00); // Cria o valor que vai ser aumentado ou não (+/-5%)
-  variacaoXRP = roundf(variacaoXRP * 100.00) /
-                100.00; // Arredondanda a variação pra 2 dígitos
-  cotacaoXRP = roundf((cotacaoXRP + variacaoXRP) * 100.00) /
-               100.00; // Soma na nova cotação
-
-  printf("|------------------------------[Atualizando as "
-         "cotações]------------------------------| \n");
-  printf(" Nova cotação do Bitcoin: %.2f Variação: %.2f%\n", cotacaoBTC,
-         variacaoBTC);
-  printf(" Nova cotação do Etherium: %.2f Variação: %.2f%\n", cotacaoETH,
-         variacaoETH);
-  printf(" Nova cotação do Ripple: %.2f Variação: %.2f%\n", cotacaoXRP,
-         variacaoXRP);
-  printf(" Cotações atualizadas com sucesso.\n");
-  printf("|--------------------------------------------------------------------"
-         "-----------------| \n");
+  printf("|------------------------------[Atualizando as cotações]------------------------------| \n");
+  for(int i=0; i<quantidade; i++){
+    printf("%s: %.2f \n", moedas[i].nome, moedas[i].cotacao);
+  }
+  printf("|-------------------------------------------------------------------------------------| \n");
   espera();
-  menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
-  return;
+  menu(pessoas, moedas, usuariologado, quantidade);
 }
 
 // Função que permite o acesso do usuario a sua conta
-void login(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+void login(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   char cpflogin[12];
   char senhalogin[7];
@@ -388,7 +222,7 @@ void login(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXR
     limpabuffer();
     espera();
     limpaterminal();
-    menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+    menuinicial(pessoas, moedas, usuariologado, quantidade);
   }
   limpabuffer();
 
@@ -400,30 +234,30 @@ void login(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXR
         printf("Senha inválida!\n");
         limpabuffer();
         espera();
-        menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        menuinicial(pessoas, moedas, usuariologado, quantidade);
       }
       limpabuffer();
       if (strcmp(senhalogin, pessoas[i].senha) == 0) {
         printf("Logado com sucesso\n");
         usuariologado = i;
         espera();
-        menu(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        menu(pessoas, moedas, usuariologado, quantidade);
         return;
       } else {
         printf("Senha incorreta\n");
         espera();
-        menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        menuinicial(pessoas, moedas, usuariologado, quantidade);
         return;
       }
     }
   }
   printf("CPF não cadastrado!\n");
   espera();
-  menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+  menuinicial(pessoas, moedas, usuariologado, quantidade);
 }
 
 // Função que permite o cadastro de um novo usuário
-void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotacaoXRP, int usuariologado) {
+void cadastrar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   char cpfcadastro[12];
   char senhacadastro[7];
@@ -434,7 +268,7 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotaca
   if (cadastrados == 9) {
     printf("Limite de cadastro atingido!\n");
     espera();
-    menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+    menuinicial(pessoas, moedas, usuariologado, quantidade);
     return;
   } else {
     printf("Digite seu CPF (Só pode possuir 11 dígitos): ");
@@ -443,7 +277,7 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotaca
       printf("CPF inválido\n");
       limpabuffer();
       espera();
-      menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      menuinicial(pessoas, moedas, usuariologado, quantidade);
       return;
     }
     limpabuffer();
@@ -451,13 +285,13 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotaca
       if ((strcmp(cpfcadastro, pessoas[i].CPF) == 0)) {
         printf("CPF já cadastrado\n");
         espera();
-        menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        menuinicial(pessoas, moedas, usuariologado, quantidade);
         return;
       } else if ((strlen(cpfcadastro) != 11) ||
                  (verificaCPF(cpfcadastro) == 0)) {
         printf("CPF inválido!\n");
         espera();
-        menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+        menuinicial(pessoas, moedas, usuariologado, quantidade);
         return;
       } else if (pessoas[i].CPF[0] == '\0') {
         printf("Digite sua senha (numérica com 6 dígitos): ");
@@ -466,8 +300,7 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotaca
           limpabuffer();
           printf("Senha inválida\n");
           espera();
-          menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP,
-                      usuariologado);
+          menuinicial(pessoas, moedas, usuariologado, quantidade);
           return;
         }
         limpabuffer();
@@ -488,21 +321,19 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotaca
               break;
             }
           }
-          pessoas[i].btc = 0.00;
-          pessoas[i].eth = 0.00;
-          pessoas[i].xrp = 0.00;
           pessoas[i].reais = 0.00;
+          for(int j = 0; j< quantidade; j++){
+            moedas[j].carteiras[i] = 0.00;
+          }
           cadastrados += 1;
           printf("Cadastro realizado com sucesso!\n");
           espera();
-          menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP,
-                      usuariologado);
+          menuinicial(pessoas, moedas, usuariologado, quantidade);
           return;
         } else {
           printf("Senha inválida. Deve ter 6 dígitos.\n");
           espera();
-          menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP,
-                      usuariologado);
+          menuinicial(pessoas, moedas, usuariologado, quantidade);
           return;
         }
       }
@@ -514,13 +345,13 @@ void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH,float cotaca
 // Funções da "interface do programa"
 
 // Mostra as opções iniciais do programa
-void menuinicial(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+void menuinicial(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   char opc;
   while (1) {
     printf(" |---------------[Menu Inicial]---------------| \n");
     printf(" | [1] Cadastro                               | \n");
-    printf(" | [2] Login                                  | \n");
+    printf(" | [2] Login como USUARIO                     | \n");
     printf(" | [3] Sair                                   | \n");
     printf(" |--------------------------------------------| \n");
     printf(" Digite a opção: ");
@@ -529,13 +360,13 @@ void menuinicial(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cot
 
     switch (opc) {
     case '1':
-      cadastrar(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      cadastrar(pessoas, moedas, usuariologado, quantidade);
       return;
     case '2':
-      login(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      login(pessoas, moedas, usuariologado, quantidade);
       return;
     case '3':
-      escrever(pessoas, 10, cotacaoBTC, cotacaoETH, cotacaoXRP);
+      escrever(pessoas, moedas, quantidade);
       exit(0);
       return;
     default:
@@ -546,7 +377,7 @@ void menuinicial(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cot
 }
 
 // Mostra as opções que usuário pode executar quando logado
-void menu(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado) {
+void menu(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade) {
   limpaterminal();
   char opc;
   while (1) {
@@ -567,28 +398,28 @@ void menu(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP
     getchar();
     switch (opc) {
     case '1':
-      consultarsaldo(pessoas, usuariologado);
+      consultarsaldo(pessoas, moedas, usuariologado, quantidade);
       break;
     case '2':
       consultarextrato(pessoas, usuariologado);
       break;
     case '3':
-      depositar(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      depositar(pessoas, moedas, usuariologado, quantidade);
       break;
     case '4':
-      sacar(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      sacar(pessoas, moedas, usuariologado, quantidade);
       break;
     case '5':
-      comprar(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      comprar(pessoas, moedas, usuariologado, quantidade);
       break;
     case '6':
-      vender(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      vender(pessoas, moedas, usuariologado, quantidade);
       break;
     case '7':
-      atualizar(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      atualizar(pessoas, moedas, usuariologado, quantidade);
       break;
     case '8':
-      menuinicial(pessoas, cotacaoBTC, cotacaoETH, cotacaoXRP, usuariologado);
+      menuinicial(pessoas, moedas, usuariologado, quantidade);
       break;
     default:
       printf(" Opção inválida, tente novamente\n");
@@ -629,7 +460,7 @@ int verificaCPF(char *cpf) {
     }
   }
   if (veri == 11) {
-    printf("CPF Inválido");
+    return 0;
   } else {
 
     for (int i = 0; i < 9; i++) {
@@ -688,21 +519,19 @@ void printarcpf(char *cpf) {
   printf("\n");
 }
 
+// ARRUMAR-=-----------------------------------
 // Responsável por adicionar uma transação no extrato do usuário
-void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor,
-                 char moeda[6], float taxa) {
+void criaextrato(pessoa pessoas[], moeda *moedas, int usuariologado, char sinal, float valor,
+                 char moeda[6], float taxa, float carteira) {
   char extrato[100];
   time_t t = time(NULL);         // Pega o horário atual
   struct tm tm = *localtime(&t); // Serve pra pegar cada informação das datas
 
   snprintf(extrato, sizeof(extrato),
            "[%02d/%02d/%04d "
-           "%02d:%02d]\t%-6c\t%-10.2f\t%-6s\t%-6.2f\t%-12.2f\t%-12.2f\t%-12."
-           "2f\t%-12.2f\n",
+           "%02d:%02d]\t%-6c\t%-10.2f\t%-6s\t%-6.2f\t%-12.2f",
            tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min,
-           sinal, valor, moeda, taxa, pessoas[usuariologado].reais,
-           pessoas[usuariologado].btc, pessoas[usuariologado].eth,
-           pessoas[usuariologado].xrp);
+           sinal, valor, moeda, taxa, carteira);
 
   // Procura uma linha vazia no extrato
   for (int i = 0; i < 100; i++) {
@@ -746,31 +575,30 @@ void verificacao(pessoa pessoas[], int usuariologado) {
 }
 
 // Escreve o arquivo binário
-void escrever(pessoa pessoas[], int quantidade, float cotacaoBTC,
-              float cotacaoETH, float cotacaoXRP) {
+void escrever(pessoa *pessoas, moeda *moedas, int *quantidade) {
   FILE *file = fopen("dados.bin", "wb");
 
+  fwrite(&quantidade, sizeof(int), 1, file);
   fwrite(pessoas, sizeof(pessoa), 10, file);
-  fwrite(&cotacaoBTC, sizeof(float), 1, file);
-  fwrite(&cotacaoETH, sizeof(float), 1, file);
-  fwrite(&cotacaoXRP, sizeof(float), 1, file);
+  fwrite(moedas, sizeof(moeda), quantidade, file);
 
   fclose(file);
 }
 
 // Lê as informações e as atribui a variáveis
-void ler(FILE *file, pessoa pessoas[], int quantidade, float *cotacaoBTC,
-         float *cotacaoETH, float *cotacaoXRP) {
+void ler(FILE *file, pessoa *pessoas, moeda **moedas, int *quantidade) {
   file = fopen("dados.bin", "rb");
 
+  fread(quantidade, sizeof(int), 1, file); 
   fread(pessoas, sizeof(pessoa), 10, file);
-  fread(cotacaoBTC, sizeof(float), 1, file);
-  fread(cotacaoETH, sizeof(float), 1, file);
-  fread(cotacaoXRP, sizeof(float), 1, file);
+
+  *moedas = malloc(*quantidade * sizeof(moeda));
+
+  fread(*moedas, sizeof(moeda), *quantidade, file);
 
   fclose(file);
 }
-
+ 
 // Verifica se o arquivo deve ser escrito ou lido
 int arquivoexiste(const char *filename) {
   FILE *file = fopen(filename, "r");

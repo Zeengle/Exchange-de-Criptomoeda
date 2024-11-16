@@ -13,28 +13,34 @@ typedef struct {
     char senha[7];  
     char nome[100];
     float reais;
-    float btc;
-    float eth;
-    float xrp;
     char ext[100][100];
 } pessoa;
 
+typedef struct{ 
+    char nome[4]; 
+    float taxa_venda;
+    float taxa_compra;
+    float cotacao;
+    float carteiras[10];
+} moeda;
+
+
 /*---------------------------------------PROTÓTIPOS MENUS---------------------------------------*/
 
-void menu(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void menuinicial(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
+void menu(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void menuinicial(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
 
 /*---------------------------------PROTÓTIPOS FUNÇÕES PRINCIPAIS---------------------------------*/
 
-void login(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void cadastrar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void consultarsaldo(pessoa pessoas[], int usuariologado);
+void login(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void cadastrar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void consultarsaldo(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
 void consultarextrato(pessoa pessoas[], int usuariologado);
-void depositar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void sacar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void comprar(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void vender(pessoa pessoas[], float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
-void atualizar(pessoa pessoas[],float cotacaoBTC, float cotacaoETH, float cotacaoXRP, int usuariologado);
+void depositar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void sacar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void comprar(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void vender(pessoa pessoas[],  moeda *moedas, int usuariologado, int quantidade);
+void atualizar(pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 
 /*---------------------------------PROTÓTIPOS FUNÇÕES AUXILIARES---------------------------------*/
 
@@ -43,12 +49,12 @@ void espera();
 void limpabuffer();
 int verificaCPF(char *cpf);
 void printarcpf(char *cpf);
-void criaextrato(pessoa pessoas[], int usuariologado, char sinal, float valor, char moeda[6], float taxa);
+void criaextrato(pessoa pessoas[], moeda *moedas, int usuariologado, char sinal, float valor, char moeda[6], float taxa, float carteira);
 void verificacao(pessoa pessoas[], int usuariologado);
 void recibocompra(float compra, float taxa);
 void recibovenda(float conversao, float taxa);
-void ler(FILE *file, pessoa pessoas[], int quantidade, float *cotacaoBTC, float *cotacaoETH, float *cotacaoXRP);
-void escrever(pessoa pessoas[], int quantidade, float cotacaoBTC, float cotacaoETH, float cotacaoXRP);
+void ler(FILE *file, pessoa *pessoas, moeda **moedas, int *quantidade); 
+void escrever(pessoa *pessoas, moeda *moedas, int *quantidade); 
 int arquivoexiste(const char *filename);
 
 #endif

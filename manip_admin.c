@@ -16,7 +16,8 @@ void menu_inicial_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuar
 
     switch (opc) {
     case '1':
-      return;
+        cadastro_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        return;
     case '2':
       return;
     case '3':
@@ -289,3 +290,74 @@ void ler_admin(admins admin[] , FILE *file_admin) {
     fclose(file_admin);
     printf("Dados do administrador carregados com sucesso!\n");
 }
+
+// FUNCOES PRINCIPAIS
+
+
+//Função de cadastrar novos administradores
+void cadastro_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+  limpaterminal();
+  char cpfcadastro[12];
+  char senhacadastro[7];
+
+  printf("|------------------------------[Cadastro Administrador]----------------------------"
+         "|\n");
+
+  printf("Digite seu CPF (Só pode possuir 11 dígitos): ");
+  scanf("%s", cpfcadastro);
+  if (strlen(cpfcadastro) != 11) {
+    printf("CPF inválido\n");
+    limpabuffer();
+    espera();
+    menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+    return;
+  }
+  limpabuffer();
+  for (int i = 0; i < 10; i++) {
+    if ((strcmp(cpfcadastro, admin[i].cpf) == 0)) {
+      printf("CPF já cadastrado\n");
+      espera();
+      menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+      return;
+    } else if ((strlen(cpfcadastro) != 11) ||
+                (verificaCPF(cpfcadastro) == 0)) {
+      printf("CPF inválido!\n");
+      espera();
+      menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+      return;
+    } else if (admin[i].cpf[0] == '\0') {
+      printf("Digite sua senha (numérica com 6 dígitos): ");
+      scanf("%s", senhacadastro);
+      limpabuffer();
+      if (strlen(senhacadastro) == 6) {
+        strcpy(admin[i].cpf, cpfcadastro);
+        strcpy(admin[i].senha, senhacadastro);
+        while(1){
+          printf("Digite seu nome: ");
+          fgets(pessoas[i].nome, 100, stdin);
+          size_t len = strlen(admin[i].nome);
+          if (len > 0 && admin[i].nome[len - 1] == '\n') {
+            admin[i].nome[len - 1] = '\0';
+          }
+          
+          if (strlen(pessoas[i].nome) < 5) {
+            printf("Nome inválido (DEVE POSSUIR 5 LETRAS), tente novamente!\n");
+          }else{
+            break;
+          }
+        }
+        
+        printf("Cadastro realizado com sucesso!\n");
+        espera();
+        menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        return;
+      } else {
+        printf("Senha inválida. Deve ter 6 dígitos.\n");
+        espera();
+        menu_inicial_adm(admin, pessoas, moedas, usuariologado, quantidade);
+        return;
+      }
+    }
+  }
+}
+

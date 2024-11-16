@@ -62,5 +62,6 @@ void login_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologad
 void cadastrar_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 void excluir_investidor_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 void cadastrar_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
+void excluir_criptomoeda(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade);
 
 #endif

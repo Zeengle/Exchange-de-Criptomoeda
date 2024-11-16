@@ -53,4 +53,5 @@ void menu_inicial_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuar
 // /*---------------------------------------PROTÓTIPOS DOS BINÁRIOS---------------------------------------*/
 
 void escrever_admin(admins admin[]);
+void ler_admin(admins admin[] , FILE *file_admin);
 #endif

@@ -361,3 +361,7 @@ void cadastro_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariolo
   }
 }
 
+//Função de login dos administradores
+void login_adm(admins admin[], pessoa pessoas[], moeda *moedas, int usuariologado, int quantidade){
+}
+
